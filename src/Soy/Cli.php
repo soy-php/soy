@@ -7,35 +7,31 @@ use League\CLImate\CLImate;
 class Cli
 {
     /**
-     * @var CLImate
-     */
-    private $climate;
-
-    /**
      * @var Soy
      */
     private $soy;
 
     /**
-     * @param CLImate $climate
      * @param Soy $soy
      */
-    public function __construct(CLImate $climate, Soy $soy)
+    public function __construct(Soy $soy)
     {
         $this->soy = $soy;
-        $this->climate = $climate;
+        $this->soy->getRecipe()->prepare(CLImate::class, function (CLImate $climate) {
+            $climate->arguments->add([
+                'component' => [
+                    'description' => 'The component to run',
+                    'defaultValue' => 'default',
+                ],
+                'help' => [
+                    'description' => 'Show usage',
+                    'longPrefix' => 'help',
+                    'noValue' => true,
+                ]
+            ]);
 
-        $this->climate->arguments->add([
-            'component' => [
-                'description' => 'The component to run',
-                'defaultValue' => 'default',
-            ],
-            'help' => [
-                'description' => 'Show usage',
-                'longPrefix' => 'help',
-                'noValue' => true,
-            ]
-        ]);
+            return $climate;
+        }, true);
     }
 
     /**
@@ -43,14 +39,18 @@ class Cli
      */
     public function handle(array $arguments)
     {
-        $this->climate->arguments->parse($arguments);
+        $this->soy->prepare();
 
-        if ($this->climate->arguments->defined('help')) {
-            $this->climate->usage();
+        $climate = $this->soy->getContainer()->get(CLImate::class);
+        $climate->arguments->parse($arguments);
+
+        if ($climate->arguments->defined('help')) {
+            $climate->usage();
             die;
         }
 
-        $component = $this->climate->arguments->get('component');
+        $component = $climate->arguments->get('component');
+
         $this->soy->execute($component);
     }
 }
