@@ -7,35 +7,31 @@ use League\CLImate\CLImate;
 class Cli
 {
     /**
-     * @var CLImate
-     */
-    private $climate;
-
-    /**
      * @var Soy
      */
     private $soy;
 
     /**
-     * @param CLImate $climate
      * @param Soy $soy
      */
-    public function __construct(CLImate $climate, Soy $soy)
+    public function __construct(Soy $soy)
     {
         $this->soy = $soy;
-        $this->climate = $climate;
+        $this->soy->getRecipe()->prepare(CLImate::class, function (CLImate $climate) {
+            $climate->arguments->add([
+                'component' => [
+                    'description' => 'The component to run',
+                    'defaultValue' => 'default',
+                ],
+                'help' => [
+                    'description' => 'Show usage',
+                    'longPrefix' => 'help',
+                    'noValue' => true,
+                ]
+            ]);
 
-        $this->climate->arguments->add([
-            'component' => [
-                'description' => 'The component to run',
-                'defaultValue' => 'default',
-            ],
-            'help' => [
-                'description' => 'Show usage',
-                'longPrefix' => 'help',
-                'noValue' => true,
-            ]
-        ]);
+            return $climate;
+        }, true);
     }
 
     /**
@@ -43,8 +39,9 @@ class Cli
      */
     public function handle(array $arguments)
     {
-        $climate = $this->climate;
+        $this->soy->prepare();
 
+        $climate = $this->soy->getContainer()->get(CLImate::class);
         $climate->arguments->parse($arguments);
 
         if ($climate->arguments->defined('help')) {
@@ -52,11 +49,7 @@ class Cli
             die;
         }
 
-        $component = $this->climate->arguments->get('component');
-
-        $this->soy->getRecipe()->prepare(CLImate::class, function () use ($climate) {
-            return $climate;
-        });
+        $component = $climate->arguments->get('component');
 
         $this->soy->execute($component);
     }

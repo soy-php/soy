@@ -43,22 +43,28 @@ class Soy
         }
     }
 
+    public function prepare()
+    {
+        $containerBuilder = new ContainerBuilder();
+
+        foreach ($this->recipe->getPreparations() as $class => $callables) {
+            foreach ($callables as $callable) {
+                $containerBuilder->addDefinitions([
+                    $class => \DI\decorate($callable)
+                ]);
+            }
+        }
+
+        $this->container = $containerBuilder->build();
+    }
+
     /**
      * @return Container
      */
     public function getContainer()
     {
         if ($this->container === null) {
-            $definitions = [];
-
-            foreach ($this->recipe->getPreparations() as $class => $callable) {
-                $definitions[$class] = $callable;
-            }
-
-            $containerBuilder = new ContainerBuilder();
-            $containerBuilder->addDefinitions($definitions);
-
-            $this->container = $containerBuilder->build();
+            throw new \LogicException('Recipe is not prepared');
         }
 
         return $this->container;

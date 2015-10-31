@@ -13,7 +13,6 @@ foreach ($autoloaders as $autoloader) {
 $recipe = require_once 'recipe.php';
 
 $soy = new \Soy\Soy($recipe);
-$climate = new \League\CLImate\CLImate();
 
-$cli = new \Soy\Cli($climate, $soy);
+$cli = new \Soy\Cli($soy);
 $cli->handle($argv);

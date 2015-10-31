@@ -23,9 +23,17 @@ class Recipe
      * @param string $class
      * @param callable $callable
      */
-    public function prepare($class, callable $callable)
+    public function prepare($class, callable $callable, $prepend = false)
     {
-        $this->preparations[$class] = $callable;
+        if (!isset($this->preparations[$class])) {
+            $this->preparations[$class] = [];
+        }
+
+        if ($prepend) {
+            array_unshift($this->preparations[$class], $callable);
+        } else {
+            array_push($this->preparations[$class], $callable);
+        }
     }
 
     /**
