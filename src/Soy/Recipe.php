@@ -7,7 +7,7 @@ class Recipe
     /**
      * @var array
      */
-    private $preparations;
+    private $preparations = [];
 
     /**
      * @var array
@@ -22,6 +22,7 @@ class Recipe
     /**
      * @param string $class
      * @param callable $callable
+     * @param bool $prepend
      */
     public function prepare($class, callable $callable, $prepend = false)
     {
@@ -41,7 +42,7 @@ class Recipe
      * @param callable|null $callable
      * @param array $dependencies
      */
-    public function component($component, callable $callable = null, $dependencies = [])
+    public function component($component, callable $callable = null, array $dependencies = [])
     {
         $this->components[$component] = $callable;
         $this->dependencies[$component] = $dependencies;
