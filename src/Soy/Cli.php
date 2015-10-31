@@ -43,14 +43,21 @@ class Cli
      */
     public function handle(array $arguments)
     {
-        $this->climate->arguments->parse($arguments);
+        $climate = $this->climate;
 
-        if ($this->climate->arguments->defined('help')) {
-            $this->climate->usage();
+        $climate->arguments->parse($arguments);
+
+        if ($climate->arguments->defined('help')) {
+            $climate->usage();
             die;
         }
 
         $component = $this->climate->arguments->get('component');
+
+        $this->soy->getRecipe()->prepare(CLImate::class, function () use ($climate) {
+            return $climate;
+        });
+
         $this->soy->execute($component);
     }
 }

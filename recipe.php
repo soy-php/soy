@@ -10,7 +10,8 @@ $recipe->prepare(\Soy\Task\GulpTask::class, function () {
 
 $recipe->component('default', null, ['gulp']);
 
-$recipe->component('gulp', function (\Soy\Task\GulpTask $gulp) {
+$recipe->component('gulp', function (\Soy\Task\GulpTask $gulp, \League\CLImate\CLImate $cli) {
+    $cli->green('Running gulp');
     $gulp->run();
 });
 
