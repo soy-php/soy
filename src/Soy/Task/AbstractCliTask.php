@@ -23,6 +23,11 @@ abstract class AbstractCliTask implements TaskInterface
     protected $climate;
 
     /**
+     * @var bool
+     */
+    protected $throwExceptionOnError = true;
+
+    /**
      * @param CLImate $climate
      */
     public function __construct(CLImate $climate)
@@ -44,7 +49,7 @@ abstract class AbstractCliTask implements TaskInterface
             $this->climate->dim(implode(PHP_EOL, $output));
         }
 
-        if ($exitCode !== 0) {
+        if ($exitCode !== 0 && $this->shouldThrowExceptionOnError()) {
             throw new CliTaskException('Non-zero exit code: ' . $exitCode);
         }
     }
@@ -82,6 +87,24 @@ abstract class AbstractCliTask implements TaskInterface
     public function setVerbose($verbose)
     {
         $this->verbose = $verbose;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldThrowExceptionOnError()
+    {
+        return $this->throwExceptionOnError;
+    }
+
+    /**
+     * @param bool $throwExceptionOnError
+     * @return $this
+     */
+    public function setThrowExceptionOnError($throwExceptionOnError)
+    {
+        $this->throwExceptionOnError = $throwExceptionOnError;
         return $this;
     }
 }
