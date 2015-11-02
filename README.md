@@ -7,6 +7,7 @@ This project is still under heavy development so there's no tag yet.
 ## Tasks
 - [Replace Task](https://github.com/soy-php/replace-task)
 - [Gulp Task](https://github.com/soy-php/gulp-task)
+- [Grunt Task](https://github.com/soy-php/grunt-task)
 - [PHP Code Sniffer](https://github.com/soy-php/codesniffer-task)
 
 ## Usage
