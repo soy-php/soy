@@ -4,6 +4,8 @@
 Soy is a PHP task runner focused on clean syntax and allowing flexible implementation.
 This project is still under heavy development so there's no tag yet.
 
+For more information, see the [Why Soy?](#why-soy) section.
+
 ## Tasks
 - [Replace Task](https://github.com/soy-php/replace-task)
 - [Gulp Task](https://github.com/soy-php/gulp-task)
@@ -115,3 +117,33 @@ $recipe->component('gulp', function (\Soy\Task\GulpTask $gulpTask, \League\CLIma
 ```
 
 You can put anything in the signature of the closure, the corresponding objects will be injected based on the type-hint.
+
+## Why Soy?
+Soy's focus is to give power back to the developer.
+
+### PHP
+Soy's recipes are written in plain PHP, no new language you have to familiarize yourself with, nor are we forcing
+you to use a markup language. The result of this decision is that you are no longer limited in what you can do.
+
+### Tasks
+Soy's tasks are mostly CLI wrappers, every task has at least one `run()` method that doesn't accept any arguments.
+That means tasks are focused on doing one thing and all options are passed through setters. Because the tasks are
+CLI wrappers, there's no risk of strange integration bugs and debugging becomes easy.
+
+### Reusability
+Reusability is something we all strive for when developing code, Soy has two ways to reinforce that mindset.
+
+The first pillar to support this is the concept of [preparing](#prepare) a task. Task preparations are stacked and 
+can be either appended or prepended. These preparations will be run during the bootstrap phase of Soy, allowing you
+to manipulate any task. An interesting object you can prepare is CLImate, preparing CLImate allows you to add
+required/optional arguments/flags, giving you full control over how you interact with your task runner.
+
+The second pillar in supporting reusability is picking setters overs `run()` method arguments, every task accepts
+its options through setters allowing you to set defaults in your task preparations. You could create a recipe with sane
+defaults, require it in your project's recipe and customize only a few things like file paths and such.
+
+### Output
+Soy doesn't like to talk, it leaves the talking to you. You can enable verbose mode on CLI tasks to get some more
+insights on the command line used and the output of the command, but there's no default output when a component gets
+executed. You can add [CLImate](http://climate.thephpleague.com/) as an argument in your component and use its awesome
+output functions to your own likings.
