@@ -24,7 +24,22 @@ For this example we can include the Gulp Task:
 $ composer require soy-php/gulp-task=dev-develop@dev
 ```
 
-Then create a `recipe.php` in your project's directory and put your tasks in there:
+Then create a `recipe.php` in your project's directory and put your tasks in there.
+This is the simplest example:
+
+```php
+<?php
+
+$recipe = new \Soy\Recipe();
+
+$recipe->component('default', function (\Soy\Task\GulpTask $gulpTask) {
+    $gulpTask->run();
+});
+
+return $recipe;
+```
+
+This is a more advanced example using custom CLI arguments and such:
 
 ```php
 <?php
