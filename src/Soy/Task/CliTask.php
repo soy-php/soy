@@ -42,13 +42,17 @@ class CliTask implements TaskInterface
 
     public function run()
     {
-        $binary = $this->getBinary();
+        $command = $this->getBinary();
 
-        if ($this->isVerbose()) {
-            $this->climate->lightBlue('$ ' . $binary);
+        if (count($this->getArguments()) > 0) {
+            $command .= ' ' . implode(' ', $this->getArguments());
         }
 
-        exec($binary, $output, $exitCode);
+        if ($this->isVerbose()) {
+            $this->climate->lightBlue('$ ' . $command);
+        }
+
+        exec($command, $output, $exitCode);
 
         if ($this->isVerbose()) {
             $this->climate->dim(implode(PHP_EOL, $output));
@@ -74,7 +78,7 @@ class CliTask implements TaskInterface
      */
     public function getBinary()
     {
-        return $this->binary . (count($this->arguments) > 0 ? ' ' . implode(' ', $this->arguments) : '');
+        return $this->binary;
     }
 
     /**
@@ -131,5 +135,13 @@ class CliTask implements TaskInterface
     {
         $this->arguments = $arguments;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
     }
 }
