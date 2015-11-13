@@ -5,7 +5,7 @@ namespace Soy\Task;
 use League\CLImate\CLImate;
 use Soy\Exception\CliTaskException;
 
-abstract class AbstractCliTask implements TaskInterface
+class CliTask implements TaskInterface
 {
     /**
      * @var string
@@ -26,6 +26,11 @@ abstract class AbstractCliTask implements TaskInterface
      * @var bool
      */
     protected $throwExceptionOnError = true;
+
+    /**
+     * @var array
+     */
+    protected $arguments = [];
 
     /**
      * @param CLImate $climate
@@ -69,7 +74,7 @@ abstract class AbstractCliTask implements TaskInterface
      */
     public function getBinary()
     {
-        return $this->binary;
+        return $this->binary . (count($this->arguments) > 0 ? ' ' . implode(' ', $this->arguments) : '');
     }
 
     /**
@@ -105,6 +110,26 @@ abstract class AbstractCliTask implements TaskInterface
     public function setThrowExceptionOnError($throwExceptionOnError)
     {
         $this->throwExceptionOnError = $throwExceptionOnError;
+        return $this;
+    }
+
+    /**
+     * @param string $argument
+     * @return $this
+     */
+    public function addArgument($argument)
+    {
+        $this->arguments[] = $argument;
+        return $this;
+    }
+
+    /**
+     * @param array $arguments
+     * @return $this
+     */
+    public function setArguments(array $arguments)
+    {
+        $this->arguments = $arguments;
         return $this;
     }
 }
