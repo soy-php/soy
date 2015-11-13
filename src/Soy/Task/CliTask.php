@@ -42,11 +42,7 @@ class CliTask implements TaskInterface
 
     public function run()
     {
-        $command = $this->getBinary();
-
-        if (count($this->getArguments()) > 0) {
-            $command .= ' ' . implode(' ', $this->getArguments());
-        }
+        $command = $this->getCommand();
 
         if ($this->isVerbose()) {
             $this->climate->lightBlue('$ ' . $command);
@@ -79,6 +75,20 @@ class CliTask implements TaskInterface
     public function getBinary()
     {
         return $this->binary;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommand()
+    {
+        $command = $this->getBinary();
+
+        if (count($this->getArguments()) > 0) {
+            $command .= ' ' . implode(' ', $this->getArguments());
+        }
+
+        return $command;
     }
 
     /**
