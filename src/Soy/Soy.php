@@ -4,9 +4,12 @@ namespace Soy;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use Soy\Exception\UnknownComponentException;
 
 class Soy
 {
+    const VERSION = '0.1.0';
+
     /**
      * @var Container
      */
@@ -27,17 +30,25 @@ class Soy
 
     /**
      * @param string $component
+     * @throws UnknownComponentException
      */
     public function execute($component = 'default')
     {
         $container = $this->getContainer();
 
-        $dependencies = $this->recipe->getDependencies()[$component];
-        foreach ($dependencies as $dependency) {
+        $components = $this->recipe->getComponents();
+        $dependencies = $this->recipe->getDependencies();
+
+        if (!array_key_exists($component, $components)) {
+            throw new UnknownComponentException('Unknown component: ' . $component, $component);
+        }
+
+        $componentDependencies = $dependencies[$component];
+        foreach ($componentDependencies as $dependency) {
             $this->execute($dependency);
         }
 
-        $callable = $this->recipe->getComponents()[$component];
+        $callable = $components[$component];
         if (is_callable($callable)) {
             $container->call($callable);
         }

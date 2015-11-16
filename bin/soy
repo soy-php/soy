@@ -12,6 +12,12 @@ foreach ($autoloaders as $autoloader) {
 
 $recipe = require_once 'recipe.php';
 
+if (!$recipe instanceof \Soy\Recipe) {
+    \Soy\Exception\Diagnoser::diagnose(new \Soy\Exception\NoRecipeReturnedException(
+        'No recipe returned in file ' . realpath('recipe.php')
+    ));
+}
+
 $soy = new \Soy\Soy($recipe);
 
 $cli = new \Soy\Cli($soy);
