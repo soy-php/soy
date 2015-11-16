@@ -1,8 +1,9 @@
 # Soy
 
+[![Latest Stable Version](https://poser.pugx.org/soy-php/soy/v/stable)](https://packagist.org/packages/soy-php/soy) [![Total Downloads](https://poser.pugx.org/soy-php/soy/downloads)](https://packagist.org/packages/soy-php/soy) [![Latest Unstable Version](https://poser.pugx.org/soy-php/soy/v/unstable)](https://packagist.org/packages/soy-php/soy) [![License](https://poser.pugx.org/soy-php/soy/license)](https://packagist.org/packages/soy-php/soy)
+
 ## Introduction
 Soy is a PHP task runner focused on clean syntax and allowing flexible implementation.
-This project is still under heavy development so there's no tag yet.
 
 For more information, see the [Why Soy?](#why-soy) section.
 
@@ -17,14 +18,14 @@ For more information, see the [Why Soy?](#why-soy) section.
 Include soy in your project with composer:
 
 ```sh
-$ composer require soy-php/soy=dev-develop@dev
+$ composer require soy-php/soy
 ```
 
 Include the tasks you need using composer, Soy doesn't come with any default tasks.
 For this example we can include the Gulp Task:
 
 ```sh
-$ composer require soy-php/gulp-task=dev-develop@dev
+$ composer require soy-php/gulp-task
 ```
 
 Then create a `recipe.php` in your project's directory and put your tasks in there.
@@ -61,8 +62,7 @@ $recipe->prepare(\League\CLImate\CLImate::class, function (\League\CLImate\CLIma
 });
 
 $recipe->prepare(\Soy\Task\GulpTask::class, function (\Soy\Task\GulpTask $gulpTask) {
-    $gulpTask->setBinary('/usr/local/bin/gulp');
-    return $gulpTask;
+    return $gulpTask->setBinary('/usr/local/bin/gulp');
 });
 
 $recipe->component('gulp', function (\Soy\Task\GulpTask $gulpTask, \League\CLImate\CLImate $climate) {
@@ -91,8 +91,7 @@ Make sure you always return the object.
 
 ```php
 $recipe->prepare(\Soy\Task\GulpTask::class, function (\Soy\Task\GulpTask $gulpTask) {
-    $gulpTask->setBinary('/usr/local/bin/gulp');
-    return $gulpTask;
+    return $gulpTask->setBinary('/usr/local/bin/gulp');
 });
 ```
 
