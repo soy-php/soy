@@ -7,10 +7,11 @@ This project is still under heavy development so there's no tag yet.
 For more information, see the [Why Soy?](#why-soy) section.
 
 ## Tasks
-- [Replace Task](https://github.com/soy-php/replace-task)
-- [Gulp Task](https://github.com/soy-php/gulp-task)
 - [Grunt Task](https://github.com/soy-php/grunt-task)
+- [Gulp Task](https://github.com/soy-php/gulp-task)
+- [Phinx Task](https://github.com/soy-php/phinx-task)
 - [PHP Code Sniffer](https://github.com/soy-php/codesniffer-task)
+- [Replace Task](https://github.com/soy-php/replace-task)
 
 ## Usage
 Include soy in your project with composer:
