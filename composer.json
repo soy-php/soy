@@ -17,5 +17,10 @@
             "Soy\\": "src/Soy/"
         }
     },
-    "bin": ["bin/soy"]
+    "bin": ["bin/soy"],
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "0.1.x-dev"
+        }
+    }
 }
