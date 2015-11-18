@@ -6,78 +6,74 @@ use Exception;
 use League\CLImate\CLImate;
 use Soy\Exception\Diagnoser;
 use Soy\Exception\FatalErrorException;
+use Soy\Exception\NoRecipeReturnedException;
+use Soy\Exception\RecipeFileNotFoundException;
 
 class Cli
 {
-    /**
-     * @var Soy
-     */
-    private $soy;
+    const DEFAULT_RECIPE_FILE = 'recipe.php';
 
     /**
-     * @param Soy $soy
+     * @var array
      */
-    public function __construct(Soy $soy)
-    {
-        $this->soy = $soy;
-        $this->soy->getRecipe()->prepare(CLImate::class, function (CLImate $climate) {
-            $climate->arguments->add([
-                'component' => [
-                    'description' => 'The component to run',
-                    'defaultValue' => 'default',
-                ],
-                'help' => [
-                    'description' => 'Show usage',
-                    'longPrefix' => 'help',
-                    'noValue' => true,
-                ],
-                'version' => [
-                    'description' => 'Show version',
-                    'longPrefix' => 'version',
-                    'noValue' => true,
-                ],
-                'noDiagnostics' => [
-                    'description' => 'Disable diagnostics',
-                    'longPrefix' => 'no-diagnostics',
-                    'noValue' => true,
-                ],
-            ]);
-
-            return $climate;
-        }, true);
-    }
+    private $defaultArguments = [
+        'component' => [
+            'description' => 'The component to run',
+            'defaultValue' => 'default',
+        ],
+        'help' => [
+            'description' => 'Show usage',
+            'longPrefix' => 'help',
+            'noValue' => true,
+        ],
+        'version' => [
+            'description' => 'Show version',
+            'longPrefix' => 'version',
+            'noValue' => true,
+        ],
+        'noDiagnostics' => [
+            'description' => 'Disable diagnostics',
+            'longPrefix' => 'no-diagnostics',
+            'noValue' => true,
+        ],
+        'recipe' => [
+            'description' => 'The recipe file to use',
+            'longPrefix' => 'recipe',
+            'defaultValue' => self::DEFAULT_RECIPE_FILE,
+        ]
+    ];
 
     /**
      * @param array $arguments
      */
     public function handle(array $arguments)
     {
-        $this->soy->prepare();
+        $soy = $this->bootstrap($arguments);
 
-        $container = $this->soy->getContainer();
+        $defaultArguments = $this->defaultArguments;
+
+        $soy->getRecipe()->prepare(CLImate::class, function (CLImate $climate) use ($defaultArguments) {
+            $climate->arguments->add($defaultArguments);
+            return $climate;
+        }, true);
+
+        $soy->prepare();
+
+        $container = $soy->getContainer();
 
         /** @var CLImate $climate */
         $climate = $container->get(CLImate::class);
         $climate->arguments->parse($arguments);
 
-        if (!$climate->arguments->defined('noDiagnostics')) {
-            $this->registerErrorHandlers();
-        }
-
         if ($climate->arguments->defined('help')) {
             $climate->green(sprintf('Soy version %s by @rskuipers', Soy::VERSION));
             $climate->usage();
-            die;
-        }
-
-        if ($climate->arguments->defined('version')) {
-            $climate->out(Soy::VERSION);
-            die;
+            exit;
         }
 
         $component = $climate->arguments->get('component');
 
-        $this->soy->execute($component);
+        $soy->execute($component);
     }
 
     private function registerErrorHandlers()
@@ -94,5 +90,43 @@ class Cli
                 ));
             }
         });
+    }
+
+    /**
+     * @param array $arguments
+     * @return Soy
+     * @throws Exception
+     * @throws NoRecipeReturnedException
+     * @throws RecipeFileNotFoundException
+     */
+    private function bootstrap(array $arguments)
+    {
+        $climate = new CLImate();
+        $climate->arguments->add($this->defaultArguments);
+        $climate->arguments->parse($arguments);
+
+        if ($climate->arguments->defined('version')) {
+            $climate->out(Soy::VERSION);
+            exit;
+        }
+
+        if (!$climate->arguments->defined('noDiagnostics')) {
+            $this->registerErrorHandlers();
+        }
+
+        $recipeFile = $climate->arguments->get('recipe');
+        if (!is_file($recipeFile)) {
+            throw new RecipeFileNotFoundException('Recipe file not found at path ' . $recipeFile, $recipeFile);
+        }
+
+        chdir(dirname($recipeFile));
+
+        $recipe = include_once $recipeFile;
+
+        if (!$recipe instanceof Recipe) {
+            throw new NoRecipeReturnedException('No recipe returned in file ' . realpath($recipeFile));
+        }
+
+        return new Soy($recipe);
     }
 }
