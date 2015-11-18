@@ -82,6 +82,6 @@ PHP;
             $climate->dim(self::MESSAGE_RETURN_RECIPE)->br();
         }
 
-        die;
+        exit(255);
     }
 }
