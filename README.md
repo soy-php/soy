@@ -12,6 +12,7 @@ For more information, see the [Why Soy?](#why-soy) section.
 - [Gulp Task](https://github.com/soy-php/gulp-task)
 - [Phinx Task](https://github.com/soy-php/phinx-task)
 - [PHP Code Sniffer](https://github.com/soy-php/codesniffer-task)
+- [PHP Mess Detector](https://github.com/soy-php/phpmd-task)
 - [Replace Task](https://github.com/soy-php/replace-task)
 
 ## Usage
