@@ -1,26 +1,28 @@
 {
-    "name": "soy-php/soy",
-    "description": "PHP task runner focused on clean syntax and allowing flexible implementation",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Rick Kuipers",
-            "email": "io@rskuipers.com"
-        }
-    ],
-    "require": {
-        "league/climate": "^3.2",
-        "php-di/php-di": "^5.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "Soy\\": "src/Soy/"
-        }
-    },
-    "bin": ["bin/soy"],
-    "extra": {
-        "branch-alias": {
-            "dev-develop": "0.1.x-dev"
-        }
+  "name": "soy-php/soy",
+  "description": "PHP task runner focused on clean syntax and allowing flexible implementation",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Rick Kuipers",
+      "email": "io@rskuipers.com"
     }
+  ],
+  "require": {
+    "league/climate": "^3.2",
+    "php-di/php-di": "^5.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Soy\\": "src/Soy/"
+    }
+  },
+  "bin": [
+    "bin/soy"
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-develop": "0.1.x-dev"
+    }
+  }
 }
