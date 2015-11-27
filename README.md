@@ -8,6 +8,7 @@ Soy is a PHP task runner focused on clean syntax and allowing flexible implement
 For more information, see the [Why Soy?](#why-soy) section.
 
 ## Tasks
+- [Codeception](https://github.com/soy-php/codeception-task)
 - [Grunt Task](https://github.com/soy-php/grunt-task)
 - [Gulp Task](https://github.com/soy-php/gulp-task)
 - [Phinx Task](https://github.com/soy-php/phinx-task)
