@@ -9,12 +9,12 @@ For more information, see the [Why Soy?](#why-soy) section.
 
 ## Tasks
 - [Codeception](https://github.com/soy-php/codeception-task)
-- [Grunt Task](https://github.com/soy-php/grunt-task)
-- [Gulp Task](https://github.com/soy-php/gulp-task)
-- [Phinx Task](https://github.com/soy-php/phinx-task)
-- [PHP Code Sniffer](https://github.com/soy-php/codesniffer-task)
+- [Grunt](https://github.com/soy-php/grunt-task)
+- [Gulp](https://github.com/soy-php/gulp-task)
+- [Phinx](https://github.com/soy-php/phinx-task)
+- [PHP Code Sniffer](https://github.com/soy-php/phpcs-task)
 - [PHP Mess Detector](https://github.com/soy-php/phpmd-task)
-- [Replace Task](https://github.com/soy-php/replace-task)
+- [Replace](https://github.com/soy-php/replace-task)
 
 ## Usage
 Include soy in your project with composer:
