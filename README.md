@@ -9,6 +9,7 @@ For more information, see the [Why Soy?](#why-soy) section.
 
 ## Tasks
 - [Codeception](https://github.com/soy-php/codeception-task)
+- [Doctrine Migrations](https://github.com/soy-php/doctrine-migrations-task)
 - [Grunt](https://github.com/soy-php/grunt-task)
 - [Gulp](https://github.com/soy-php/gulp-task)
 - [Phinx](https://github.com/soy-php/phinx-task)
