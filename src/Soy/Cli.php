@@ -63,9 +63,9 @@ class Cli
         $climate = $container->get(CLImate::class);
         $climate->arguments->parse();
 
-        $componentName = $climate->arguments->get('component');
+        $componentName = $this->parseComponentFromCli($climate);
 
-        $soy->prepareCli($climate);
+        $soy->prepareCli($climate, $componentName);
         $this->validateCli($climate);
 
         if ($climate->arguments->defined('help')) {
@@ -137,15 +137,9 @@ class Cli
     {
         $longPrefixes = [];
         $prefixes = [];
-        $names = [];
 
         $arguments = $climate->arguments->all();
         foreach ($arguments as $argument) {
-            if (in_array($argument->name(), $names)) {
-                throw new CliArgumentDuplicationException('Duplicate name: ' . $argument->name());
-            }
-            $names[] = $argument->name();
-
             if (in_array($argument->longPrefix(), $longPrefixes)) {
                 throw new CliArgumentDuplicationException('Duplicate longPrefix: ' . $argument->longPrefix());
             }
@@ -156,5 +150,20 @@ class Cli
             }
             $prefixes[] = $argument->prefix();
         }
+    }
+
+    /**
+     * @param CLImate $climate
+     * @return string
+     */
+    private function parseComponentFromCli(CLImate $climate)
+    {
+        $componentName = $climate->arguments->get('component');
+
+        if (strpos($componentName, '-') === 0) {
+            $componentName = $climate->arguments->all()['component']->defaultValue();
+        }
+
+        return $componentName;
     }
 }

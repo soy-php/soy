@@ -37,19 +37,11 @@ class Soy
     {
         $container = $this->getContainer();
 
-        $components = $this->recipe->getComponents();
-
         $this->traverseDependencies($componentName, function ($dependency) {
             $this->execute($dependency);
         });
 
-        if (!array_key_exists($componentName, $components)) {
-            throw new UnknownComponentException('Unknown component: ' . $componentName, $componentName);
-        }
-
-
-        $component = $components[$componentName];
-        $component->execute($container);
+        $this->getRecipe()->getComponent($componentName)->execute($container);
     }
 
     public function prepare()
@@ -89,16 +81,18 @@ class Soy
 
     /**
      * @param CLImate $climate
+     * @param string $componentName
+     * @throws UnknownComponentException
      */
-    public function prepareCli(CLImate $climate)
+    public function prepareCli(CLImate $climate, $componentName)
     {
-        $componentName = $climate->arguments->get('component');
+        $component = $this->getRecipe()->getComponent($componentName);
 
         $this->traverseDependencies($componentName, function ($componentName) use ($climate) {
             $this->getRecipe()->getComponent($componentName)->prepareCli($climate);
         });
 
-        $this->getRecipe()->getComponent($componentName)->prepareCli($climate);
+        $component->prepareCli($climate);
 
         $climate->arguments->parse();
     }

@@ -52,6 +52,10 @@ PHP;
 $ soy --recipe recipes/main.php
 PHP;
 
+    const MESSAGE_FLAG_WITHOUT_VALUE = <<<'PHP'
+$ soy --foo my-value
+PHP;
+
     /**
      * @param Exception $exception
      */
@@ -86,6 +90,13 @@ PHP;
             )) {
                 $climate->lightYellow('Did you forget to return the object in your preparation?');
                 $climate->dim(sprintf(self::MESSAGE_PREPARE_RETURN, $matches[1]))->br();
+            } elseif (preg_match(
+                '/Undefined offset: 1 in (.*Parser\.php.*) on line \d+/',
+                $exception->getMessage(),
+                $matches
+            )) {
+                $climate->lightYellow('Did you use an argument, that expects a value, without a value?');
+                $climate->dim(self::MESSAGE_FLAG_WITHOUT_VALUE)->br();
             }
         } elseif ($exception instanceof NoRecipeReturnedException) {
             $climate->lightYellow('Did you forget to return the recipe object in your recipe.php?');
