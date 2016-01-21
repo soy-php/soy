@@ -130,6 +130,9 @@ class Cli
         return new Soy($recipe);
     }
 
+    /**
+     * @param CLImate $climate
+     */
     private function validateCli(CLImate $climate)
     {
         $longPrefixes = [];
