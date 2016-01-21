@@ -2,6 +2,8 @@
 
 namespace Soy;
 
+use Soy\Exception\UnknownComponentException;
+
 class Recipe
 {
     /**
@@ -10,7 +12,7 @@ class Recipe
     private $preparations = [];
 
     /**
-     * @var array
+     * @var Component[]
      */
     private $components = [];
 
@@ -41,19 +43,36 @@ class Recipe
      * @param string $component
      * @param callable|null $callable
      * @param array $dependencies
+     * @return Component
      */
     public function component($component, callable $callable = null, array $dependencies = [])
     {
-        $this->components[$component] = $callable;
+        $this->components[$component] = new Component($component, $callable);
         $this->dependencies[$component] = $dependencies;
+
+        return $this->components[$component];
     }
 
     /**
-     * @return array
+     * @return Component[]
      */
     public function getComponents()
     {
         return $this->components;
+    }
+
+    /**
+     * @param string $componentName
+     * @return Component
+     * @throws UnknownComponentException
+     */
+    public function getComponent($componentName)
+    {
+        if (!array_key_exists($componentName, $this->components)) {
+            throw new UnknownComponentException('Component ' . $componentName . ' not found');
+        }
+
+        return $this->components[$componentName];
     }
 
     /**

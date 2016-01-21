@@ -4,6 +4,7 @@ namespace Soy;
 
 use Exception;
 use League\CLImate\CLImate;
+use Soy\Exception\CliArgumentDuplicationException;
 use Soy\Exception\Diagnoser;
 use Soy\Exception\FatalErrorException;
 use Soy\Exception\NoRecipeReturnedException;
@@ -43,12 +44,9 @@ class Cli
         ]
     ];
 
-    /**
-     * @param array $arguments
-     */
-    public function handle(array $arguments)
+    public function handle()
     {
-        $soy = $this->bootstrap($arguments);
+        $soy = $this->bootstrap();
 
         $defaultArguments = $this->defaultArguments;
 
@@ -63,7 +61,12 @@ class Cli
 
         /** @var CLImate $climate */
         $climate = $container->get(CLImate::class);
-        $climate->arguments->parse($arguments);
+        $climate->arguments->parse();
+
+        $componentName = $climate->arguments->get('component');
+
+        $soy->prepareCli($climate);
+        $this->validateCli($climate);
 
         if ($climate->arguments->defined('help')) {
             $climate->green(sprintf('Soy version %s by @rskuipers', Soy::VERSION));
@@ -71,9 +74,7 @@ class Cli
             exit;
         }
 
-        $component = $climate->arguments->get('component');
-
-        $soy->execute($component);
+        $soy->execute($componentName);
     }
 
     private function registerErrorHandlers()
@@ -93,17 +94,16 @@ class Cli
     }
 
     /**
-     * @param array $arguments
      * @return Soy
      * @throws Exception
      * @throws NoRecipeReturnedException
      * @throws RecipeFileNotFoundException
      */
-    private function bootstrap(array $arguments)
+    private function bootstrap()
     {
         $climate = new CLImate();
         $climate->arguments->add($this->defaultArguments);
-        $climate->arguments->parse($arguments);
+        $climate->arguments->parse();
 
         if ($climate->arguments->defined('version')) {
             $climate->out(Soy::VERSION);
@@ -128,5 +128,30 @@ class Cli
         }
 
         return new Soy($recipe);
+    }
+
+    private function validateCli(CLImate $climate)
+    {
+        $longPrefixes = [];
+        $prefixes = [];
+        $names = [];
+
+        $arguments = $climate->arguments->all();
+        foreach ($arguments as $argument) {
+            if (in_array($argument->name(), $names)) {
+                throw new CliArgumentDuplicationException('Duplicate name: ' . $argument->name());
+            }
+            $names[] = $argument->name();
+
+            if (in_array($argument->longPrefix(), $longPrefixes)) {
+                throw new CliArgumentDuplicationException('Duplicate longPrefix: ' . $argument->longPrefix());
+            }
+            $longPrefixes[] = $argument->longPrefix();
+
+            if ($argument->prefix() && in_array($argument->prefix(), $prefixes)) {
+                throw new CliArgumentDuplicationException('Duplicate prefix: ' . $argument->prefix());
+            }
+            $prefixes[] = $argument->prefix();
+        }
     }
 }
