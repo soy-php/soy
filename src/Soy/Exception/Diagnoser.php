@@ -49,7 +49,7 @@ $ soy
 PHP;
 
     const MESSAGE_SPECIFY_RECIPE = <<<'PHP'
-$ soy --recipe=recipes/main.php
+$ soy --recipe recipes/main.php
 PHP;
 
     /**
