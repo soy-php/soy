@@ -154,7 +154,7 @@ $recipe->cli(function (\League\CLImate\CLImate $climate) {
 });
 ```
 
-If you want to add arguments from a specific task to your CLI:
+If you want to add arguments from a specific task to your component:
 
 ```php
 $fooComponent = $recipe->component('foo', function (\Soy\Task\FooTask $fooTask, \Soy\Task\BarTask $barTask) {
