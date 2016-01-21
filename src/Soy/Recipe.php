@@ -2,6 +2,7 @@
 
 namespace Soy;
 
+use League\CLImate\CLImate;
 use Soy\Exception\UnknownComponentException;
 
 class Recipe
@@ -89,5 +90,16 @@ class Recipe
     public function getDependencies()
     {
         return $this->dependencies;
+    }
+
+    /**
+     * @param callable $callable
+     */
+    public function cli(callable $callable)
+    {
+        $this->prepare(CLImate::class, function (CLImate $climate) use ($callable) {
+            $callable($climate);
+            return $climate;
+        });
     }
 }
