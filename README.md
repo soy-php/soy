@@ -137,6 +137,65 @@ $recipe->component('gulp', function (\Soy\Task\GulpTask $gulpTask, \League\CLIma
 
 You can put anything in the signature of the closure, the corresponding objects will be injected based on the type-hint.
 
+### CLI
+There are three ways of defining CLI commands, each suitable for different situations.
+
+If you want to introduce a global argument:
+
+```php
+$recipe->cli(function (\League\CLImate\CLImate $climate) {
+    $climate->arguments->add([
+        'foo' => [
+            'description' => 'foo',
+            'longPrefix' => 'foo',
+            'noValue' => true,
+        ],
+    ]);
+});
+```
+
+If you want to add arguments from a specific task to your CLI:
+
+```php
+$fooComponent = $recipe->component('foo', function (\Soy\Task\FooTask $fooTask, \Soy\Task\BarTask $barTask) {
+    $fooTask->run();
+    $barTask->run();
+});
+
+$fooComponent->cli([\Soy\Task\FooTask::class, 'prepareCli']);
+$fooComponent->cli([\Soy\Task\BarTask::class, 'prepareCli']);
+```
+
+You can also use fluent interfacing:
+
+```php
+$recipe->component('foo', function (\Soy\Task\FooTask $fooTask, \Soy\Task\BarTask $barTask) {
+    $fooTask->run();
+    $barTask->run();
+})
+    ->cli([\Soy\Task\FooTask::class, 'prepareCli'])
+    ->cli([\Soy\Task\BarTask::class, 'prepareCli'])
+;
+```
+
+If you want to add your own component specific arguments:
+
+```php
+$fooComponent = $recipe->component('foo', function (\Soy\Task\FooTask $fooTask) {
+    $fooTask->run();
+});
+
+$fooComponent->cli(function (\League\CLImate\CLImate $climate) {
+    $climate->arguments->add([
+        'foo' => [
+            'description' => 'foo',
+            'longPrefix' => 'foo',
+            'noValue' => true,
+        ],
+    ]);
+});
+```
+
 ## Why Soy?
 Soy's focus is to give power back to the developer.
 
