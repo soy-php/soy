@@ -11,4 +11,4 @@ foreach ($autoloaders as $autoloader) {
 }
 
 $cli = new \Soy\Cli();
-$cli->handle($argv);
+$cli->handle();
