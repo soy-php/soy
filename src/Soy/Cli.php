@@ -121,7 +121,7 @@ class Cli
 
         chdir(dirname($recipeFile));
 
-        $recipe = include_once $recipeFile;
+        $recipe = include_once basename($recipeFile);
 
         if (!$recipe instanceof Recipe) {
             throw new NoRecipeReturnedException('No recipe returned in file ' . realpath($recipeFile));
