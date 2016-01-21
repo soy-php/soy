@@ -94,6 +94,7 @@ class Recipe
 
     /**
      * @param callable $callable
+     * @return $this
      */
     public function cli(callable $callable)
     {
@@ -101,5 +102,7 @@ class Recipe
             $callable($climate);
             return $climate;
         });
+
+        return $this;
     }
 }
