@@ -2,6 +2,6 @@
 
 namespace Soy\Exception;
 
-class CliArgumentDuplicationException extends \LogicException
+class CliArgumentDuplicationException extends SoyException
 {
 }

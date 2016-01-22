@@ -2,7 +2,7 @@
 
 namespace Soy\Exception;
 
-class RecipeFileNotFoundException extends \Exception
+class RecipeFileNotFoundException extends SoyException
 {
     /**
      * @var string

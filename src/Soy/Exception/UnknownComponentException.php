@@ -2,7 +2,7 @@
 
 namespace Soy\Exception;
 
-class UnknownComponentException extends \Exception
+class UnknownComponentException extends SoyException
 {
     /**
      * @var string

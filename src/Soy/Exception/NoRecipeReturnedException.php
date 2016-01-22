@@ -2,6 +2,6 @@
 
 namespace Soy\Exception;
 
-class NoRecipeReturnedException extends \Exception
+class NoRecipeReturnedException extends SoyException
 {
 }

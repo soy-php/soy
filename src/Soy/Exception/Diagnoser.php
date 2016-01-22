@@ -62,9 +62,13 @@ PHP;
     public static function diagnose(Exception $exception)
     {
         $climate = new CLImate();
-        
-        $climate->error(get_class($exception) . ': ' . $exception->getMessage());
-        $climate->error($exception->getTraceAsString())->br();
+
+        if ($exception instanceof SoyException) {
+            $exception->output($climate);
+        } else {
+            $climate->error(get_class($exception) . ': ' . $exception->getMessage());
+            $climate->dim($exception->getTraceAsString())->br();
+        }
 
         if ($exception instanceof UnknownComponentException) {
             if ($exception->getComponent() === 'default') {
@@ -114,6 +118,6 @@ PHP;
             }
         }
 
-        exit(255);
+        exit($exception->getCode() === 0 ? 255 : $exception->getCode());
     }
 }
