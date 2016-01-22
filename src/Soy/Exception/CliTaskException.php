@@ -2,6 +2,6 @@
 
 namespace Soy\Exception;
 
-class CliTaskException extends \RuntimeException
+class CliTaskException extends SoyException
 {
 }
