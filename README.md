@@ -17,6 +17,7 @@ For more information, see the [Why Soy?](#why-soy) section.
 - [PHP Lint](https://github.com/soy-php/php-lint-task)
 - [PHP Mess Detector](https://github.com/soy-php/phpmd-task)
 - [Replace](https://github.com/soy-php/replace-task)
+- [Symfony Build Parameters](https://github.com/Enrise/soy-symfony-build-parameters-task)
 
 ## Usage
 Include soy in your project with composer:
