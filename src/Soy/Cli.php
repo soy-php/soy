@@ -15,9 +15,24 @@ class Cli
     const DEFAULT_RECIPE_FILE = 'recipe.php';
 
     /**
+     * @var string
+     */
+    private $recipe;
+
+    /**
+     * @var bool
+     */
+    private $useCwd;
+
+    /**
+     * @var bool
+     */
+    private $selfContainedRecipe;
+
+    /**
      * @var array
      */
-    private $defaultArguments = [
+    private static $defaultArguments = [
         'component' => [
             'description' => 'The component to run',
             'defaultValue' => 'default',
@@ -41,14 +56,18 @@ class Cli
             'description' => 'The recipe file to use',
             'longPrefix' => 'recipe',
             'defaultValue' => self::DEFAULT_RECIPE_FILE,
-        ]
+        ],
     ];
 
     public function handle()
     {
         $soy = $this->bootstrap();
 
-        $defaultArguments = $this->defaultArguments;
+        $defaultArguments = static::$defaultArguments;
+
+        if ($this->isSelfContainedRecipe()) {
+            unset($defaultArguments['recipe']);
+        }
 
         $soy->getRecipe()->prepare(CLImate::class, function (CLImate $climate) use ($defaultArguments) {
             $climate->arguments->add($defaultArguments);
@@ -102,7 +121,7 @@ class Cli
     private function bootstrap()
     {
         $climate = new CLImate();
-        $climate->arguments->add($this->defaultArguments);
+        $climate->arguments->add(static::$defaultArguments);
         $climate->arguments->parse();
 
         if ($climate->arguments->defined('version')) {
@@ -114,24 +133,59 @@ class Cli
             $this->registerErrorHandlers();
         }
 
-        $recipeFile = $climate->arguments->get('recipe');
-        if (!is_file($recipeFile)) {
-            throw new RecipeFileNotFoundException('Recipe file not found at path ' . $recipeFile, $recipeFile);
+        $recipePath = $this->recipe;
+
+        // If not self-contained get the recipe from CLI command
+        if (!$this->isSelfContainedRecipe()) {
+            $this->recipe = $climate->arguments->get('recipe');
+            $recipePath = basename($this->recipe);
         }
 
-        chdir(dirname($recipeFile));
+        if (!is_file($recipePath)) {
+            throw new RecipeFileNotFoundException('Recipe file not found at path ' . $this->recipe, $this->recipe);
+        }
 
-        $recipe = include_once basename($recipeFile);
+        if (!$this->isUseCwd()) {
+            chdir(dirname($this->recipe));
+        }
 
-        if (!$recipe instanceof Recipe) {
-            throw new NoRecipeReturnedException('No recipe returned in file ' . realpath($recipeFile));
+        $recipe = include_once $recipePath;
+
+        if (! $recipe instanceof Recipe) {
+            throw new NoRecipeReturnedException('No recipe returned in file ' . realpath($this->recipe));
         }
 
         return new Soy($recipe);
     }
 
+    private function isSelfContainedRecipe()
+    {
+        return $this->selfContainedRecipe;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function isUseCwd()
+    {
+        return $this->useCwd;
+    }
+
+    /**
+     * Self Contained Recipes disables the option to change the recipe during and multiple components, only relying
+     * on the default one. Also makes possible to use de current working directory instead of the recipe's base one
+     * @param string $recipe the recipe.php path
+     */
+    public function setSelfContainedRecipe($recipe)
+    {
+        $this->recipe = $recipe;
+        $this->useCwd = true;
+        $this->selfContainedRecipe = true;
+    }
+
     /**
      * @param CLImate $climate
+     * @throws CliArgumentDuplicationException
      */
     private function validateCli(CLImate $climate)
     {
@@ -140,12 +194,12 @@ class Cli
 
         $arguments = $climate->arguments->all();
         foreach ($arguments as $argument) {
-            if (in_array($argument->longPrefix(), $longPrefixes)) {
+            if (in_array($argument->longPrefix(), $longPrefixes, true)) {
                 throw new CliArgumentDuplicationException('Duplicate longPrefix: ' . $argument->longPrefix());
             }
             $longPrefixes[] = $argument->longPrefix();
 
-            if ($argument->prefix() && in_array($argument->prefix(), $prefixes)) {
+            if ($argument->prefix() && in_array($argument->prefix(), $prefixes, true)) {
                 throw new CliArgumentDuplicationException('Duplicate prefix: ' . $argument->prefix());
             }
             $prefixes[] = $argument->prefix();

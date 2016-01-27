@@ -86,6 +86,35 @@ $recipe->component('default', null, ['gulp']);
 return $recipe;
 ```
 
+### Self contained CLI Recipes
+
+With soy its also possible to embed your recipe inside a CLI command, you create the php script and then include
+the desired recipe by calling \Soy\Cli:setSelfContainedRecipe(). I.e.:
+
+cliRecipe.php
+```php
+#!/usr/bin/env php
+<?php
+
+$loaders = [__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'];
+
+foreach ($loaders as $loader) {
+    if (is_file($loader)) {
+        require_once $loader;
+        break;
+    }
+}
+
+$soyCli = new \Soy\Cli();
+$soyCli->setSelfContainedRecipe(__DIR__ . '/recipe.php');
+
+$soyCli->handle();
+```
+
+And then you can give it execution permissions `chmod +x cliRecipe.php`
+
+Executing it by `./cliRecipe.php --help`
+
 ## API
 The core of Soy is the Recipe, it has two main methods: `prepare` and `component`.
 
