@@ -41,7 +41,7 @@ This is the simplest example:
 
 $recipe = new \Soy\Recipe();
 
-$recipe->component('default', function (\Soy\Task\GulpTask $gulpTask) {
+$recipe->component('default', function (\Soy\Gulp\RunTask $gulpTask) {
     $gulpTask->run();
 });
 
@@ -55,22 +55,20 @@ This is a more advanced example using custom CLI arguments and such:
 
 $recipe = new \Soy\Recipe();
 
-$recipe->prepare(\League\CLImate\CLImate::class, function (\League\CLImate\CLImate $climate) {
+$recipe->cli(function (\League\CLImate\CLImate $climate) {
     $climate->arguments->add('verbose', [
         'prefix' => 'v',
         'longPrefix' => 'verbose',
         'description' => 'Verbose output',
         'noValue' => true,
     ]);
-
-    return $climate;
 });
 
-$recipe->prepare(\Soy\Task\GulpTask::class, function (\Soy\Task\GulpTask $gulpTask) {
+$recipe->prepare(\Soy\Gulp\RunTask::class, function (\Soy\Gulp\RunTask $gulpTask) {
     return $gulpTask->setBinary('/usr/local/bin/gulp');
 });
 
-$recipe->component('gulp', function (\Soy\Task\GulpTask $gulpTask, \League\CLImate\CLImate $climate) {
+$recipe->component('gulp', function (\Soy\Gulp\RunTask $gulpTask, \League\CLImate\CLImate $climate) {
     $verbose = $climate->arguments->defined('verbose');
     if ($verbose) {
         $climate->green('Running gulp');
@@ -99,23 +97,6 @@ $recipe->prepare(\Soy\Task\GulpTask::class, function (\Soy\Task\GulpTask $gulpTa
     return $gulpTask->setBinary('/usr/local/bin/gulp');
 });
 ```
-
-The `prepare` method also allows you to add accepted arguments using [CLImate](http://climate.thephpleague.com/).
-For example:
-
-```php
-$recipe->prepare(\League\CLImate\CLImate::class, function (\League\CLImate\CLImate $climate) {
-    $climate->arguments->add('verbose', [
-        'prefix' => 'v',
-        'longPrefix' => 'verbose',
-        'description' => 'Verbose output',
-        'noValue' => true,
-    ]);
-
-    return $climate;
-});
-```
-
 You can have as many `prepare` methods as you want and even for the same class. You can also pass a third parameter
 to prepend the preparation instead of appending it.
 
